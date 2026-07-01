@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Claude Code 終端機 AI 編程助手：零門檻免 VPN 搭建與進階實戰指南</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github.min.css" id="hljs-light">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css" id="hljs-dark" disabled>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/common.min.js" defer></script>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: rgba(255,255,255,.86);
+      --panel-solid: #ffffff;
+      --text: #182033;
+      --muted: #637083;
+      --line: #d9e0ea;
+      --primary: #2563eb;
+      --primary-2: #0ea5e9;
+      --accent: #f59e0b;
+      --code-bg: #f3f5f8;
+      --shadow: 0 18px 55px rgba(20, 29, 49, .12);
+      --radius: 18px;
+      --content-width: 980px;
+      --toc-width: 300px;
+    }
+    [data-theme="dark"] {
+      --bg: #0c111d;
+      --panel: rgba(17, 24, 39, .82);
+      --panel-solid: #111827;
+      --text: #e5ecf6;
+      --muted: #9aa8bc;
+      --line: #263244;
+      --primary: #60a5fa;
+      --primary-2: #22d3ee;
+      --accent: #fbbf24;
+      --code-bg: #0f172a;
+      --shadow: 0 20px 60px rgba(0,0,0,.42);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans HK", "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(37,99,235,.14), transparent 34%),
+        radial-gradient(circle at 92% 8%, rgba(14,165,233,.14), transparent 32%),
+        var(--bg);
+      line-height: 1.72;
+      letter-spacing: .01em;
+      transition: background .25s ease, color .25s ease;
+    }
+    a { color: var(--primary); text-decoration-thickness: .08em; text-underline-offset: .18em; }
+    a:hover { color: var(--primary-2); }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(16px);
+      background: color-mix(in srgb, var(--panel-solid) 78%, transparent);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 10px 28px rgba(37, 99, 235, .25);
+      flex: 0 0 auto;
+    }
+    .brand-title {
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 62vw;
+    }
+    .toolbar { display: flex; align-items: center; gap: 8px; }
+    button.icon-btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--panel-solid);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 650;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,.04);
+    }
+    button.icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .layout {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: var(--toc-width) minmax(0, 1fr);
+      gap: 28px;
+      padding: 28px 20px 64px;
+    }
+    aside.toc {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      max-height: calc(100vh - 104px);
+      overflow: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .toc h2 { font-size: .98rem; margin: 0 0 12px; letter-spacing: .06em; color: var(--muted); }
+    .toc-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+    .toc-list a {
+      display: block;
+      padding: 7px 9px;
+      border-radius: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .92rem;
+      line-height: 1.38;
+    }
+    .toc-list a:hover, .toc-list a.active { background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); }
+    .toc-h3 { padding-left: 18px !important; font-size: .86rem !important; }
+    .toc-h4, .toc-h5, .toc-h6 { padding-left: 30px !important; font-size: .82rem !important; }
+    main { min-width: 0; }
+    .doc {
+      max-width: var(--content-width);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: clamp(22px, 4vw, 52px);
+      margin: 0 auto;
+    }
+    .doc > h1:first-child {
+      margin-top: 0;
+      font-size: clamp(1.85rem, 4vw, 3.15rem);
+      line-height: 1.16;
+      letter-spacing: -.03em;
+      background: linear-gradient(135deg, var(--text), var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: .18em;
+      border-bottom: 1px solid var(--line);
+    }
+    h1, h2, h3, h4 { line-height: 1.32; letter-spacing: -.015em; scroll-margin-top: 96px; }
+    h2 { margin-top: 2.2em; padding-top: .35em; border-top: 1px solid var(--line); font-size: clamp(1.35rem, 2.2vw, 1.9rem); }
+    h3 { margin-top: 1.65em; font-size: 1.2rem; }
+    h4 { margin-top: 1.4em; font-size: 1.05rem; }
+    p, li { font-size: 1rem; }
+    strong { font-weight: 800; }
+    blockquote {
+      margin: 1.3em 0;
+      padding: 1em 1.15em;
+      border-left: 5px solid var(--accent);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+      border-radius: 0 14px 14px 0;
+      color: var(--text);
+    }
+    hr { border: 0; height: 1px; background: var(--line); margin: 2.2em 0; }
+    table {
+      width: 100%; border-collapse: collapse; overflow: hidden;
+      margin: 1.4em 0; font-size: .94rem;
+      background: var(--panel-solid); border-radius: 14px;
+      display: block; overflow-x: auto; border: 1px solid var(--line);
+    }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; min-width: 130px; }
+    th { text-align: left; background: color-mix(in srgb, var(--primary) 13%, transparent); font-weight: 800; white-space: nowrap; }
+    tr:last-child td { border-bottom: 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: .92em;
+      background: var(--code-bg);
+      border: 1px solid var(--line);
+      padding: .13em .35em;
+      border-radius: 7px;
+    }
+    pre {
+      position: relative;
+      margin: 1.25em 0;
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--code-bg);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    pre code { display: block; border: 0; background: transparent; padding: 18px; font-size: .92rem; line-height: 1.65; }
+    .copy-code {
+      position: absolute;
+      top: 9px; right: 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-solid);
+      color: var(--muted);
+      padding: 4px 9px;
+      font-size: .78rem;
+      cursor: pointer;
+      opacity: .9;
+    }
+    .copy-code:hover { color: var(--primary); border-color: var(--primary); }
+    .heading-anchor {
+      opacity: 0;
+      margin-left: .42em;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .78em;
+    }
+    h1:hover .heading-anchor, h2:hover .heading-anchor, h3:hover .heading-anchor, h4:hover .heading-anchor { opacity: 1; }
+    .back-to-top {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      display: none;
+      z-index: 40;
+    }
+    .back-to-top.show { display: inline-flex; }
+    .mobile-toc-panel { display: none; }
+    .source-note { color: var(--muted); font-size: .88rem; margin-top: 2rem; }
+    @media (max-width: 980px) {
+      .layout { display: block; padding: 18px 12px 54px; }
+      aside.toc { display: none; }
+      .doc { border-radius: 18px; padding: 22px 18px; }
+      .brand-title { max-width: 48vw; }
+      .mobile-toc-panel {
+        display: none;
+        position: fixed;
+        inset: 61px 12px auto 12px;
+        max-height: calc(100vh - 84px);
+        overflow: auto;
+        background: var(--panel-solid);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+        z-index: 35;
+      }
+      .mobile-toc-panel.open { display: block; }
+      .mobile-toc-panel h2 { margin: 0 0 10px; font-size: 1rem; color: var(--muted); }
+      table { font-size: .88rem; }
+      th, td { min-width: 160px; padding: 10px 12px; }
+    }
+    @media print {
+      .topbar, aside.toc, .mobile-toc-panel, .back-to-top, .copy-code, .heading-anchor { display: none !important; }
+      body { background: #fff; color: #000; }
+      .layout { display: block; padding: 0; }
+      .doc { box-shadow: none; border: 0; max-width: none; }
+      a { color: #000; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand" title="Claude Code 終端機 AI 編程助手：零門檻免 VPN 搭建與進階實戰指南">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-title">Claude Code 終端機 AI 編程助手：零門檻免 VPN 搭建與進階實戰指南</div>
+      </div>
+      <div class="toolbar">
+        <button class="icon-btn" id="tocToggle" type="button" aria-expanded="false" aria-controls="mobileToc">目錄</button>
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="切換亮暗色模式">🌙 暗色</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-toc-panel" id="mobileToc" role="dialog" aria-label="文件目錄">
+    <h2>文件目錄</h2>
+    <nav id="mobileTocNav"></nav>
+  </div>
+
+  <div class="layout">
+    <aside class="toc" aria-label="文件目錄">
+      <h2>文件目錄</h2>
+      <nav id="tocNav"></nav>
+    </aside>
+    <main>
+      <article class="doc" id="content">
+<h1 id="claude-code-終端機-ai-編程助手零門檻免-vpn-搭建與進階實戰指南">Claude Code 終端機 AI 編程助手：零門檻免 VPN 搭建與進階實戰指南<a aria-label="連結到此章節" class="heading-anchor" href="#claude-code-終端機-ai-編程助手零門檻免-vpn-搭建與進階實戰指南">#</a></h1>
+<h2 id="一-課程簡介與核心痛點">一、 課程簡介與核心痛點<a aria-label="連結到此章節" class="heading-anchor" href="#一-課程簡介與核心痛點">#</a></h2>
+<p>Claude Code 是由 Anthropic 推出的 AI 編程助手（Coding Agent）。與傳統的 AI 聊天機器人（Chatbot）不同，它不僅能生成代碼，還能深度理解項目架構、直接修改本地檔案、執行終端機命令，甚至直接將網站發佈上網。</p>
+<p>然而，官方 Claude Code 的申請與使用門檻極高，包含以下限制：</p>
+<ol>
+<li><strong>地域限制</strong>：必須使用 VPN。</li>
+<li><strong>身分驗證</strong>：需要國外虛擬電話號碼接收簡訊。</li>
+<li><strong>支付限制</strong>：需要國外信用卡。</li>
+<li><strong>封號風險</strong>：隨時可能面臨帳號被封禁的困境。</li>
+</ol>
+<p><strong>本課核心目標</strong>：透過開源工具與第三方大語言模型（LLM）替代方案，跳過官方帳號登入與地域限制，實現「零門檻、免 VPN、免國外信用卡」流暢運行 Claude Code，並透過核心技能（Skills）大幅提升 AI 生成網頁的視覺與邏輯品質。</p>
+<hr/>
+<h2 id="二-核心概念ai-助手與模型的廚房理論">二、 核心概念：AI 助手與模型的「廚房理論」<a aria-label="連結到此章節" class="heading-anchor" href="#二-核心概念ai-助手與模型的廚房理論">#</a></h2>
+<p>為了理解如何繞過官方限制，必須先釐清 Claude Code 的運作架構：</p>
+<ul>
+<li><strong>Claude Code（基礎框架/廚房配套）</strong>：相當於一間專業的廚房。它配備了焗爐、攪拌機等齊全的硬體與幫廚。在實際應用中，這些配套指的是它讀取專案、修改檔案、自動測試與部署的「Agent 能力」。</li>
+<li><strong>cc switch</strong>：開源桌面應用工具，可切換底層 LLM 模型並橋接 Claude Code。<a href="https://github.com/farion1231/cc-switch" rel="noopener noreferrer" target="_blank">GitHub 下載</a></li>
+<li><strong>LLM 模型（大腦/廚師）</strong>：真正負責思考、撰寫代碼的底層模型。</li>
+</ul>
+<p>傳統上，這間廚房（Claude Code）綁定的是官方廚師（Claude 模型）。但透過技術手段，我們可以<strong>保留整間專業廚房的配套，將底層的大腦更換為其他兼容的第三方或開源模型</strong>。</p>
+<hr/>
+<h2 id="三-環境配置與安裝步驟">三、 環境配置與安裝步驟<a aria-label="連結到此章節" class="heading-anchor" href="#三-環境配置與安裝步驟">#</a></h2>
+<h3 id="步驟-1基礎環境準備">步驟 1：基礎環境準備<a aria-label="連結到此章節" class="heading-anchor" href="#步驟-1基礎環境準備">#</a></h3>
+<p>在安裝 Claude Code 之前，系統必須具備以下兩個基礎環境。請至官方網站下載並完成安裝：</p>
+<ul>
+<li><strong>Node.js</strong>（JavaScript 運行環境）：<a href="https://nodejs.org/" rel="noopener noreferrer" target="_blank">Node.js 官方網站</a></li>
+<li><strong>Git</strong>（版本控制系統）：<a href="https://git-scm.com/" rel="noopener noreferrer" target="_blank">Git 官方網站</a></li>
+</ul>
+<h3 id="步驟-2安裝-claude-code">步驟 2：安裝 Claude Code<a aria-label="連結到此章節" class="heading-anchor" href="#步驟-2安裝-claude-code">#</a></h3>
+<p>打開作業系統的終端機（Terminal 或 Windows PowerShell），輸入以下命令進行全域安裝：</p>
+<pre><code class="language-bash">npm install -g --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code
+</code></pre>
+<p>安裝完成後，輸入以下命令檢查是否安裝成功：</p>
+<pre><code class="language-bash">claude --version
+</code></pre>
+<p>見到 <code>2.1.195 (Claude Code)</code> 就代表成功。</p>
+<h3 id="步驟-3下載並安裝-cc-switch">步驟 3：下載並安裝 CC Switch<a aria-label="連結到此章節" class="heading-anchor" href="#步驟-3下載並安裝-cc-switch">#</a></h3>
+<p>下載連結：<a href="https://github.com/farion1231/cc-switch/releases/latest" rel="noopener noreferrer" target="_blank">https://github.com/farion1231/cc-switch/releases/latest</a></p>
+<p>揀 <code>CC-Switch-v3.16.4-Windows.msi</code>，double-click 安裝。</p>
+<h3 id="步驟-4用-cc-switch-配置-minimax">步驟 4：用 CC Switch 配置 MiniMax<a aria-label="連結到此章節" class="heading-anchor" href="#步驟-4用-cc-switch-配置-minimax">#</a></h3>
+<ol>
+<li>打開 CC Switch</li>
+<li>新增供應商 → 揀 MiniMax（選擇正確的供應商按鈕後，Base URL 一般已自動填上）</li>
+<li>填入：<ul>
+<li><strong>Base URL</strong>：如未自動填上，可手動填入 <code>https://api.minimax.io/anthropic</code>，或參考你自訂模型的配置文件</li>
+<li><strong>API Key</strong>：你的 MiniMax Coding Plan Key</li>
+</ul>
+</li>
+<li>儲存 → 切換到 MiniMax</li>
+</ol>
+<blockquote>
+<p>MiniMax 開發者平台：<a href="https://platform.minimaxi.com/" rel="noopener noreferrer" target="_blank">https://platform.minimaxi.com/</a></p>
+</blockquote>
+<h3 id="步驟-5測試">步驟 5：測試<a aria-label="連結到此章節" class="heading-anchor" href="#步驟-5測試">#</a></h3>
+<pre><code class="language-bash">claude
+</code></pre>
+<p>若系統成功載入並直接進入 Claude Code 互動介面，而未彈出 Anthropic 官方登入提示，即代表自訂模型配置成功。</p>
+<hr/>
+<h2 id="四-主流-llm-模型選擇策略">四、 主流 LLM 模型選擇策略<a aria-label="連結到此章節" class="heading-anchor" href="#四-主流-llm-模型選擇策略">#</a></h2>
+<p>當我們不使用 Anthropic 官方模型時，有以下幾種主流的替代方案：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">模型名稱</th>
+<th style="text-align:left">計費與成本</th>
+<th style="text-align:left">優缺點分析</th>
+<th style="text-align:left">適用場景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>MiniMax (M3)</strong></td>
+<td style="text-align:left">約 $10–$20 USD / 月 (Token Plan Plus 內含 17 億 Tokens)</td>
+<td style="text-align:left"><strong>優點</strong>：性價比最高，支援全模態（文字、代碼、語音、圖片），與 <code>cc switch</code> 兼容性最佳。&lt;br&gt;<strong>缺點</strong>：極複雜架構重構能力略遜於 Claude 官方。</td>
+<td style="text-align:left">新手入門、日常網站開發、MVP（最小可行性產品）製作。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>GLM (智譜清言)</strong></td>
+<td style="text-align:left">國際版約 $22 HKD / 月</td>
+<td style="text-align:left"><strong>優點</strong>：編程能力非常接近 Claude 官方模型，價格僅為官方的七分之一。</td>
+<td style="text-align:left">代碼邏輯要求較高的專案。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>DeepSeek (V4)</strong></td>
+<td style="text-align:left">按量計費 (Pay-as-you-go)</td>
+<td style="text-align:left"><strong>優點</strong>：若使用量不大，此方案最為便宜划算。</td>
+<td style="text-align:left">低頻率使用者、小型維護專案。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Google Gemini</strong></td>
+<td style="text-align:left">免費模型額度</td>
+<td style="text-align:left"><strong>優點</strong>：完全免費。&lt;br&gt;<strong>缺點</strong>：<strong>必須開啟 VPN</strong>，且免費額度有限，高頻使用會迅速耗盡。</td>
+<td style="text-align:left">單頁網頁（Single-page web）開發、臨時測試。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>開源本地模型</strong></td>
+<td style="text-align:left">完全免費（自建）</td>
+<td style="text-align:left"><strong>優點</strong>：數據完全在地化，無隱私洩露疑慮。&lt;br&gt;<strong>缺點</strong>：對本地電腦硬件（顯示卡、記憶體）要求極高，否則運行極為卡頓。</td>
+<td style="text-align:left">對數據隱私有極高要求的企業或個人開發者。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>性能總結</strong>：雖然內地模型（如 MiniMax M3、GLM 5.2）在標準編程基準測試上與官方 Claude 仍有數字上的差距，但其價格便宜約 20 倍。在日常網頁開發、工具製作及 MVP 階段，兩者的實際體驗差距微乎其微。只有在面對極其複雜的大型專案重構時，才需要考慮升級至官方模型。</p>
+</blockquote>
+<hr/>
+<h2 id="五-必學核心命令-essential-commands">五、 必學核心命令 (Essential Commands)<a aria-label="連結到此章節" class="heading-anchor" href="#五-必學核心命令-essential-commands">#</a></h2>
+<p>進入 Claude Code 後，有三個命令是日常開發必備的：</p>
+<ul>
+<li><strong><code>/init</code></strong><ul>
+<li><strong>功能</strong>：掃描當前專案目錄，並自動生成一份 <code>CLAUDE.md</code> 檔案。</li>
+<li><strong>原理</strong>：該檔案記錄了專案的結構、編程規範與框架喜好，讓 AI 在後續對話中主動遵循。</li>
+<li><strong>實測效果</strong>：能<strong>有效減少 30% 至 40% 的 Token 消耗</strong>。</li>
+</ul>
+</li>
+<li><strong><code>/clear</code></strong><ul>
+<li><strong>功能</strong>：清空當前對話的上下文（Context）。</li>
+<li><strong>重要性</strong>：新手常犯的錯誤是將所有任務堆疊在同一個對話中，導致後期 Token 膨脹且 AI 邏輯混亂。<strong>每完成一個階段性任務，務必執行一次 <code>/clear</code></strong>，再開始下一個任務。</li>
+</ul>
+</li>
+<li><strong><code>/model</code></strong><ul>
+<li><strong>功能</strong>：在對話中途動態切換不同的底層 LLM 模型，以因應不同的任務需求。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>⚠️ 注意事項（設計限制）</strong>：
+當 Claude Code 橋接內地模型（如 MiniMax）時，其內建的 <strong>WebSearch（網路搜尋功能）將無法使用</strong>。這是因為內地模型的 API 代理並未支援 Anthropic 的搜尋接口。這屬於設計限制而非 Bug。</p>
+<ul>
+<li><strong>替代方案</strong>：使用 <strong><code>MMX search</code></strong> 指令，或搭配專門的 Agent 進行網頁資料蒐集。</li>
+</ul>
+</blockquote>
+<hr/>
+<h2 id="六-進階外掛功能必裝-skills-推薦">六、 進階外掛功能：必裝 Skills 推薦<a aria-label="連結到此章節" class="heading-anchor" href="#六-進階外掛功能必裝-skills-推薦">#</a></h2>
+<p>Skills 是基於 Markdown 文件編寫的工作流程與規則指南。當裝載 Skills 後，Claude Code 會在適當的開發場景下自動啟用這些規則。</p>
+<h3 id="1-frontend-design-前端美化外掛">1. Frontend Design (前端美化外掛)<a aria-label="連結到此章節" class="heading-anchor" href="#1-frontend-design-前端美化外掛">#</a></h3>
+<ul>
+<li><strong>來源</strong>：Anthropic 官方出品（超過 27 萬次安裝）。</li>
+<li><strong>核心功能</strong>：解決 AI 寫網頁時常見的「白底黑字、毫無設計感」的問題。它會強制 AI 在生成前端網頁時，自動加入現代化的配色、字體排版、CSS 動態效果與組件優化，讓網頁具備線上產品級的視覺外觀。</li>
+</ul>
+<h3 id="2-superpowers-邏輯思維強化">2. Superpowers (邏輯思維強化)<a aria-label="連結到此章節" class="heading-anchor" href="#2-superpowers-邏輯思維強化">#</a></h3>
+<ul>
+<li><strong>社群熱度</strong>：GitHub 超過 7 萬 Stars。</li>
+<li><strong>核心功能</strong>：改變 AI 的工作路徑。當收到複雜需求時，它會<strong>強制 AI 禁止立刻動筆寫代碼</strong>，而是必須先進行結構化思考、排查潛在邏輯漏洞、制定開發計劃，確保最簡單可行的方案成立後才開始撰寫。</li>
+</ul>
+<h3 id="3-code-review-代碼質量審查">3. Code Review (代碼質量審查)<a aria-label="連結到此章節" class="heading-anchor" href="#3-code-review-代碼質量審查">#</a></h3>
+<ul>
+<li><strong>來源</strong>：Anthropic 官方出品。</li>
+<li><strong>核心功能</strong>：充當自動化 QC（質量檢查員）。當代碼編寫完成後，該外掛會自動執行一次全面質檢，審查安全性漏洞、執行效能優化空間以及代碼風格（Code Style）是否合規，並直接標出有問題的程式碼行數。</li>
+</ul>
+<h3 id="安裝方式">🚀 安裝方式<a aria-label="連結到此章節" class="heading-anchor" href="#安裝方式">#</a></h3>
+<p>在 Claude Code 介面中，直接輸入以下命令即可自動下載與部署插件：</p>
+<pre><code class="language-bash">/plugin install [插件名稱]
+</code></pre>
+<p><em>(亦可直接指派 Claude Code Agent 替你自動尋找並下載安裝。)</em></p>
+<hr/>
+<h2 id="七-課堂練習題">七、 課堂練習題<a aria-label="連結到此章節" class="heading-anchor" href="#七-課堂練習題">#</a></h2>
+<ol>
+<li><strong>環境配置思考</strong>：當您在運行 Claude Code 時，發現 AI 常常忘記您專案所使用的 React 版本，導致一直生成錯誤的語法。請問您應該優先使用哪一個核心命令來解決這個問題？它會在專案中生成什麼檔案？</li>
+<li><strong>架構理解</strong>：請簡述「Claude Code 基礎框架」與「底層 LLM 模型」之間的關係。若為了節省預算，新手最推薦優先配置哪一個第三方模型？</li>
+<li><strong>最佳實踐</strong>：為什麼不建議將一整天、涉及多個模組的開發對話全部塞在同一個終端機視窗中？正確的工作流程應該如何搭配命令執行？</li>
+</ol>
+<hr/>
+<h2 id="關於-deepmind-pro">🎙️ 關於 DeepMind Pro<a aria-label="連結到此章節" class="heading-anchor" href="#關於-deepmind-pro">#</a></h2>
+<p>我們專注於分享最新、最實用的 AI 技術與數位工具，旨在幫助每一位學習者與職場專業人士在 AI 時代實現效率翻倍。透過深入淺出的教學，將複雜的技術轉化為日常可用的「超能力」。
+👉YouTube頻道：<a href="https://www.youtube.com/@DeepMindProNet" rel="noopener noreferrer" target="_blank">https://www.youtube.com/@DeepMindProNet</a>
+👉加入Discord AI 交流群組：<a href="https://discord.gg/c9mU8eTxV" rel="noopener noreferrer" target="_blank">https://discord.gg/c9mU8eTxV</a>
+👉推薦實用提示詞工具：<a href="https://promptparrot.net" rel="noopener noreferrer" target="_blank">https://promptparrot.net</a>
+👉影片筆記：<a href="https://deepmindpro.net/" rel="noopener noreferrer" target="_blank">https://deepmindpro.net/</a></p>
+<p>❤️支持DMP深度學習：
+<a href="https://buymeacoffee.com/lootdesigni" rel="noopener noreferrer" target="_blank">https://buymeacoffee.com/lootdesigni</a></p>
+
+        <p class="source-note">由 Markdown 課堂筆記轉換而成。最後生成時間：2026-07-01。</p>
+      </article>
+    </main>
+  </div>
+
+  <button class="icon-btn back-to-top" id="backToTop" type="button" aria-label="返回頂部">↑</button>
+
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const themeToggle = document.getElementById('themeToggle');
+      const tocToggle = document.getElementById('tocToggle');
+      const mobileToc = document.getElementById('mobileToc');
+      const backToTop = document.getElementById('backToTop');
+      const lightCss = document.getElementById('hljs-light');
+      const darkCss = document.getElementById('hljs-dark');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const savedTheme = localStorage.getItem('doc-theme');
+      const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+      function applyTheme(theme) {
+        root.dataset.theme = theme;
+        const dark = theme === 'dark';
+        themeToggle.textContent = dark ? '☀️ 亮色' : '🌙 暗色';
+        lightCss.disabled = dark;
+        darkCss.disabled = !dark;
+        localStorage.setItem('doc-theme', theme);
+      }
+      applyTheme(initialTheme);
+      themeToggle.addEventListener('click', () => applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+      function buildToc() {
+        const headings = Array.from(document.querySelectorAll('#content h1, #content h2, #content h3, #content h4'));
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        headings.forEach(h => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = '#' + h.id;
+          a.textContent = h.textContent.replace(/#$/, '').trim();
+          a.className = 'toc-' + h.tagName.toLowerCase();
+          a.addEventListener('click', () => {
+            mobileToc.classList.remove('open');
+            tocToggle.setAttribute('aria-expanded', 'false');
+          });
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+        document.getElementById('tocNav').appendChild(list.cloneNode(true));
+        document.getElementById('mobileTocNav').appendChild(list);
+        return headings;
+      }
+      const headings = buildToc();
+      const tocLinks = Array.from(document.querySelectorAll('.toc-list a'));
+
+      tocToggle.addEventListener('click', () => {
+        const open = mobileToc.classList.toggle('open');
+        tocToggle.setAttribute('aria-expanded', String(open));
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          mobileToc.classList.remove('open');
+          tocToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      document.querySelectorAll('pre').forEach(pre => {
+        const btn = document.createElement('button');
+        btn.className = 'copy-code';
+        btn.type = 'button';
+        btn.textContent = '複製';
+        btn.addEventListener('click', async () => {
+          const code = pre.querySelector('code');
+          if (!code) return;
+          try {
+            await navigator.clipboard.writeText(code.innerText);
+            btn.textContent = '已複製';
+            setTimeout(() => btn.textContent = '複製', 1200);
+          } catch (err) {
+            btn.textContent = '失敗';
+            setTimeout(() => btn.textContent = '複製', 1200);
+          }
+        });
+        pre.appendChild(btn);
+      });
+
+      function updateActiveToc() {
+        let current = headings[0];
+        for (const h of headings) {
+          if (h.getBoundingClientRect().top <= 120) current = h;
+          else break;
+        }
+        tocLinks.forEach(a => a.classList.toggle('active', current && a.getAttribute('href') === '#' + current.id));
+        backToTop.classList.toggle('show', window.scrollY > 480);
+      }
+      document.addEventListener('scroll', updateActiveToc, { passive: true });
+      window.addEventListener('resize', updateActiveToc);
+      backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+      window.addEventListener('load', () => {
+        if (window.hljs) hljs.highlightAll();
+        updateActiveToc();
+      });
+    })();
+  </script>
+</body>
+</html>
